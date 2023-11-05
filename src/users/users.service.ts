@@ -31,8 +31,10 @@ export class UsersService {
 	}
 
 	//查询单个用户
-	findOne(id: number) {
-		return this.usersRepository.findOne({ where: { id: id } });
+	async findOne(id: number) {
+		const user = await this.usersRepository.findOne({ where: { id: id } });
+		const { password, ...result } = user;
+		return result;
 	}
 
 	//更新用户
@@ -43,5 +45,10 @@ export class UsersService {
 	//删除用户
 	remove(id: number) {
 		return `This action removes a #${id} user`;
+	}
+
+	// 核对用户名，供登录使用
+	findOneByUsername(username: string) {
+		return this.usersRepository.findOne({ where: { username: username } });
 	}
 }
