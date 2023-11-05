@@ -14,6 +14,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "src/auth/auth.service";
+import { Public } from "src/auth/auth.decorator";
 
 @Controller("users")
 export class UsersController {
@@ -22,6 +23,7 @@ export class UsersController {
 		private readonly authService: AuthService,
 	) {}
 
+	@Public()
 	@UseGuards(AuthGuard("ValidateUser"))
 	@Post("login")
 	async login(@Request() req: any) {
