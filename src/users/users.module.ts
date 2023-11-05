@@ -12,7 +12,6 @@ import { JwtAuthGuard } from "src/auth/jwt.gurd";
 	controllers: [UsersController],
 	providers: [
 		UsersService,
-
 		{
 			provide: APP_GUARD,
 			useClass: JwtAuthGuard,

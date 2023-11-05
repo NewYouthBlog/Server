@@ -15,6 +15,8 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "src/auth/auth.service";
 import { Public } from "src/auth/auth.decorator";
+import { Roles } from "src/role/roles.decorator";
+import { Role } from "src/role/role.enum";
 
 @Controller("users")
 export class UsersController {
@@ -31,16 +33,19 @@ export class UsersController {
 	}
 
 	@Post()
+	@Public()
 	create(@Body() createUserDto: CreateUserDto) {
 		return this.usersService.create(createUserDto);
 	}
 
 	@Get()
+	@Roles(Role.Admin)
 	findAll() {
 		return this.usersService.findAll();
 	}
 
 	@Get(":id")
+	@Roles(Role.Admin)
 	findOne(@Param("id") id: string) {
 		return this.usersService.findOne(+id);
 	}
@@ -51,6 +56,7 @@ export class UsersController {
 	}
 
 	@Delete(":id")
+	@Roles(Role.Admin)
 	remove(@Param("id") id: string) {
 		return this.usersService.remove(+id);
 	}
