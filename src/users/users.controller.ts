@@ -44,10 +44,11 @@ export class UsersController {
 		return this.usersService.findAll();
 	}
 
+	@Public()
 	@Get(":id")
 	@Roles(Role.Admin)
 	findOne(@Param("id") id: string) {
-		return this.usersService.findOne(+id);
+		return this.usersService.findOne(id);
 	}
 
 	@Patch(":id")

@@ -10,5 +10,5 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	password: string;
 
-	roles: Role[] = [Role.User];
+	roles: string[] = ["user"];
 }

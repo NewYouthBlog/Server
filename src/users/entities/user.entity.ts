@@ -1,18 +1,12 @@
+import { prop } from "@typegoose/typegoose";
 import { Role } from "src/role/role.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
-export class User {
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column()
+// @modelOptions({ schemaOptions: { collection: "user" } })
+export class users {
+	@prop({ required: true })
 	username: string;
-
-	@Column()
+	@prop({ required: true })
 	password: string;
-
-	//FIX: 这里不能用
-	@Column()
+	@prop({ allowMixed: 0, default: ["user"] })
 	roles: Role[];
 }

@@ -1,27 +1,25 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { Repository } from "typeorm";
-import { User } from "./entities/user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
+import { users } from "./entities/user.entity";
+import { InjectModel } from "nestjs-typegoose";
+import { ReturnModelType } from "@typegoose/typegoose";
 
 @Injectable()
 export class UsersService {
 	constructor(
-		@InjectRepository(User)
-		private usersRepository: Repository<User>,
+		@InjectModel(users) private readonly usersRepository: ReturnModelType<typeof users>,
 	) {}
 
 	// 创建用户
 	async create(createUserDto: CreateUserDto) {
-		const finduser = await this.usersRepository.findOne({
-			where: { username: createUserDto.username },
-		});
-
+		const finduser = await this.usersRepository
+			.findOne({ username: createUserDto.username })
+			.select("+password");
 		if (finduser) {
 			throw new BadRequestException("用户名已存在");
 		}
-		const user = await this.usersRepository.save(createUserDto);
+		const user = await this.usersRepository.create(createUserDto);
 		return user;
 	}
 
@@ -31,8 +29,11 @@ export class UsersService {
 	}
 
 	//查询单个用户
-	async findOne(id: number) {
-		const user = await this.usersRepository.findOne({ where: { id: id } });
+	async findOne(id: string) {
+		const user = await this.usersRepository.findById(id);
+		if (!user) {
+			throw new NotFoundException("用户不存在");
+		}
 		const { password, ...result } = user;
 		return result;
 	}
@@ -49,6 +50,6 @@ export class UsersService {
 
 	// 核对用户名，供登录使用
 	findOneByUsername(username: string) {
-		return this.usersRepository.findOne({ where: { username: username } });
+		return this.usersRepository.findOne({ username: username });
 	}
 }
