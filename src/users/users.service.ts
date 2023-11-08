@@ -30,12 +30,11 @@ export class UsersService {
 
 	//查询单个用户
 	async findOne(id: string) {
-		const user = await this.usersRepository.findById(id);
+		const user: users = await this.usersRepository.findById(id).select("-password");
 		if (!user) {
 			throw new NotFoundException("用户不存在");
 		}
-		const { password, ...result } = user;
-		return result;
+		return user;
 	}
 
 	//更新用户

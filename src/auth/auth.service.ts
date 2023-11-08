@@ -17,14 +17,12 @@ export class AuthService {
 			throw new UnauthorizedException("密码错误");
 		}
 		if (user && user.password === password) {
-			const { password, ...result } = user;
-			return result;
+			return user;
 		}
 		return null;
 	}
 	// 发放token
 	async realseToken(user: any) {
-		console.log(user._doc.username);
 		const payload = { username: user.username, sub: String(user._id) };
 		return {
 			Token: this.jwtService.sign(payload),
