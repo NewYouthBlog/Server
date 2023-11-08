@@ -3,9 +3,9 @@ import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { users } from "./entities/user.entity";
 import { AuthModule } from "src/auth/auth.module";
-import { APP_GUARD } from "@nestjs/core";
-import { JwtAuthGuard } from "src/auth/jwt.gurd";
 import { TypegooseModule } from "nestjs-typegoose";
+import { APP_GUARD } from "@nestjs/core";
+import { RolesGuard } from "src/role/roles.guard";
 
 @Module({
 	imports: [TypegooseModule.forFeature([users]), forwardRef(() => AuthModule)],
@@ -14,7 +14,7 @@ import { TypegooseModule } from "nestjs-typegoose";
 		UsersService,
 		{
 			provide: APP_GUARD,
-			useClass: JwtAuthGuard,
+			useClass: RolesGuard,
 		},
 	],
 	exports: [UsersService],

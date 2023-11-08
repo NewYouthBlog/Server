@@ -23,7 +23,7 @@ export class AuthService {
 	}
 	// 发放token
 	async realseToken(user: any) {
-		const payload = { username: user.username, sub: String(user._id) };
+		const payload = { username: user.username, sub: String(user._id), roles: user.roles };
 		return {
 			Token: this.jwtService.sign(payload),
 		};

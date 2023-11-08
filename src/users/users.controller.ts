@@ -33,7 +33,7 @@ export class UsersController {
 	}
 
 	@Post()
-	@Public()
+	@Roles(Role.Admin)
 	create(@Body() createUserDto: CreateUserDto) {
 		return this.usersService.create(createUserDto);
 	}
@@ -44,7 +44,6 @@ export class UsersController {
 		return this.usersService.findAll();
 	}
 
-	@Public()
 	@Get(":id")
 	@Roles(Role.Admin)
 	findOne(@Param("id") id: string) {
