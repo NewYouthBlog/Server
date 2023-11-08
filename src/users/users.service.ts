@@ -30,6 +30,7 @@ export class UsersService {
 
 	//查询单个用户
 	async findOne(id: string) {
+		// typegoose的查询不能使用结构的方式隐藏password，否则会返回一些奇怪的东西,但是可以使用select("-password")的方式隐藏
 		const user: users = await this.usersRepository.findById(id).select("-password");
 		if (!user) {
 			throw new NotFoundException("用户不存在");
