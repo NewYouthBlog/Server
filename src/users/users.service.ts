@@ -24,8 +24,9 @@ export class UsersService {
 	}
 
 	// 查询所有用户
-	findAll() {
-		return `This action returns all users`;
+	async findAll() {
+		const user = await this.usersRepository.find().select("-password");
+		return user;
 	}
 
 	//查询单个用户
@@ -39,13 +40,21 @@ export class UsersService {
 	}
 
 	//更新用户
-	update(id: number, updateUserDto: UpdateUserDto) {
-		return `This action updates a #${id} user`;
+	async update(id: string, updateUserDto: UpdateUserDto) {
+		const { username, ...updateOne } = updateUserDto;
+		await this.usersRepository.findByIdAndUpdate(id, updateOne);
+		return { who: updateUserDto.username };
 	}
 
 	//删除用户
-	remove(id: number) {
-		return `This action removes a #${id} user`;
+	async remove(id: string) {
+		// 先查询
+		const finduser = await this.usersRepository.findOne({ _id: id }).select("-password");
+
+		if (!finduser) {
+			throw new BadRequestException("该用户不存在");
+		}
+		await this.usersRepository.deleteOne({ _id: id });
 	}
 
 	// 核对用户名，供登录使用

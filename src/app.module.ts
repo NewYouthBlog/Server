@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { TypegooseModule } from "nestjs-typegoose";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtAuthGuard } from "./auth/jwt.gurd";
+import { TagsModule } from './tags/tags.module';
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { JwtAuthGuard } from "./auth/jwt.gurd";
 		}),
 		UsersModule,
 		AuthModule,
+		TagsModule,
 	],
 	controllers: [AppController],
 	providers: [

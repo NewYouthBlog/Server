@@ -14,8 +14,8 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "src/auth/auth.service";
-import { Public } from "src/auth/auth.decorator";
-import { Roles } from "src/role/roles.decorator";
+import { PublicApi } from "src/auth/auth.decorator";
+import { AllowedFrom } from "src/role/roles.decorator";
 import { Role } from "src/role/role.enum";
 
 @Controller("users")
@@ -25,7 +25,7 @@ export class UsersController {
 		private readonly authService: AuthService,
 	) {}
 
-	@Public()
+	@PublicApi()
 	@UseGuards(AuthGuard("ValidateUser"))
 	@Post("login")
 	async login(@Request() req: any) {
@@ -33,31 +33,32 @@ export class UsersController {
 	}
 
 	@Post()
-	@Roles(Role.Admin)
+	@AllowedFrom(Role.Admin)
 	create(@Body() createUserDto: CreateUserDto) {
 		return this.usersService.create(createUserDto);
 	}
 
 	@Get()
-	@Roles(Role.Admin)
+	@AllowedFrom(Role.Admin)
 	findAll() {
 		return this.usersService.findAll();
 	}
 
 	@Get(":id")
-	@Roles(Role.Admin)
+	@AllowedFrom(Role.Admin)
 	findOne(@Param("id") id: string) {
 		return this.usersService.findOne(id);
 	}
 
 	@Patch(":id")
+	@AllowedFrom(Role.Admin)
 	update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-		return this.usersService.update(+id, updateUserDto);
+		return this.usersService.update(id, updateUserDto);
 	}
 
 	@Delete(":id")
-	@Roles(Role.Admin)
+	@AllowedFrom(Role.Admin)
 	remove(@Param("id") id: string) {
-		return this.usersService.remove(+id);
+		return this.usersService.remove(id);
 	}
 }
