@@ -1,7 +1,6 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { prop } from "@typegoose/typegoose";
 
 export class Tag {
-	@IsNotEmpty()
-	@IsString()
+	@prop({ required: true })
 	name: string;
 }
