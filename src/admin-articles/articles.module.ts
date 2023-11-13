@@ -9,4 +9,4 @@ import { Article } from "./entities/article.entity";
 	providers: [ArticlesService],
 	imports: [TypegooseModule.forFeature([Article])],
 })
-export class ArticlesModule {}
+export class AdminArticlesModule {}
