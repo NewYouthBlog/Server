@@ -9,7 +9,10 @@ export class PublicArticlesService {
 		@InjectModel(Article) private readonly articleRepository: ReturnModelType<typeof Article>,
 	) {}
 	async findAll(status = 1, skip = 0, limit?: number) {
-		const query = this.articleRepository.find({ status }).sort({ _id: -1 });
+		const query = this.articleRepository
+			.find({ status })
+			.sort({ _id: -1 })
+			.populate("tags", "name");
 		if (limit) {
 			query.skip(skip).limit(limit);
 		}

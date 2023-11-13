@@ -1,5 +1,6 @@
-import { prop } from "@typegoose/typegoose";
+import { Ref, prop } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
+import { Tag } from "src/tags/entities/tag.entity";
 
 export class Article extends TimeStamps {
 	@prop({ required: true })
@@ -15,4 +16,8 @@ export class Article extends TimeStamps {
 	image: string;
 	@prop({ default: "" })
 	HeadImg: string;
+
+	//引用tag集合
+	@prop({ ref: () => Tag })
+	tags: Ref<Tag>[];
 }

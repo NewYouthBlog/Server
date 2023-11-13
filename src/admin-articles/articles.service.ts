@@ -11,6 +11,7 @@ export class ArticlesService {
 		@InjectModel(Article) private readonly articleRepository: ReturnModelType<typeof Article>,
 	) {}
 	async create(createArticleDto: CreateArticleDto) {
+		//FIX: 创建文章时，需要在标签中添加文章id
 		const article = await this.articleRepository.create(createArticleDto);
 		return article;
 	}

@@ -19,6 +19,10 @@ export class TagsController {
 	findAll() {
 		return this.tagsService.findAll();
 	}
+	@Get(":id")
+	findOne(@Param("id") id: string) {
+		return this.tagsService.findOne(id);
+	}
 
 	@Patch(":id")
 	update(@Param("id") id: string, @Body() updateTagDto: UpdateTagDto) {

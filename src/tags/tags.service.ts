@@ -22,16 +22,21 @@ export class TagsService {
 		return await this.tagsRepository.find();
 	}
 
+	async findOne(id: string) {
+		const findtag = await this.tagsRepository.findOne({ _id: id }).populate("articles", "title");
+		if (!findtag) {
+			throw new BadRequestException("该标签不存在");
+		}
+		return findtag;
+	}
+
 	async update(id: string, updateTagDto: UpdateTagDto) {
 		await this.tagsRepository.findByIdAndUpdate(id, updateTagDto);
 		return { name: updateTagDto.name };
 	}
 
 	async remove(id: string) {
-		const findtag = await this.tagsRepository.findOne({ _id: id });
-		if (!findtag) {
-			throw new BadRequestException("该标签不存在");
-		}
+		await this.findOne(id);
 		await this.tagsRepository.deleteOne({ _id: id });
 	}
 }
