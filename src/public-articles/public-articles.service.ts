@@ -1,26 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePublicArticleDto } from './dto/create-public-article.dto';
-import { UpdatePublicArticleDto } from './dto/update-public-article.dto';
+import { Injectable } from "@nestjs/common";
+import { ReturnModelType } from "@typegoose/typegoose";
+import { InjectModel } from "nestjs-typegoose";
+import { Article } from "src/admin-articles/entities/article.entity";
 
 @Injectable()
 export class PublicArticlesService {
-  create(createPublicArticleDto: CreatePublicArticleDto) {
-    return 'This action adds a new publicArticle';
-  }
+	constructor(
+		@InjectModel(Article) private readonly articleRepository: ReturnModelType<typeof Article>,
+	) {}
+	async findAll(status = 1, skip = 0, limit?: number) {
+		const query = this.articleRepository.find({ status }).sort({ _id: -1 });
+		if (limit) {
+			query.skip(skip).limit(limit);
+		}
+		return query.exec();
+	}
 
-  findAll() {
-    return `This action returns all publicArticles`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} publicArticle`;
-  }
-
-  update(id: number, updatePublicArticleDto: UpdatePublicArticleDto) {
-    return `This action updates a #${id} publicArticle`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} publicArticle`;
-  }
+	findOne(id: number) {
+		return `This action returns a #${id} publicArticle`;
+	}
 }
