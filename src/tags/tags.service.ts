@@ -19,11 +19,19 @@ export class TagsService {
 	}
 
 	async findAll() {
-		return await this.tagsRepository.find();
+		return await this.tagsRepository.find().select("-articles");
 	}
 
 	async findOne(id: string) {
 		const findtag = await this.tagsRepository.findOne({ _id: id }).populate("articles", "title");
+		if (!findtag) {
+			throw new BadRequestException("该标签不存在");
+		}
+		return findtag;
+	}
+
+	async findWithName(name: string) {
+		const findtag = await this.tagsRepository.findOne({ name });
 		if (!findtag) {
 			throw new BadRequestException("该标签不存在");
 		}
@@ -37,6 +45,7 @@ export class TagsService {
 
 	async remove(id: string) {
 		await this.findOne(id);
-		await this.tagsRepository.deleteOne({ _id: id });
+		const res = this.tagsRepository.deleteOne({ _id: id });
+		return res;
 	}
 }

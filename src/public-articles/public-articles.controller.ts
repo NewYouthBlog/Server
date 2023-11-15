@@ -15,6 +15,21 @@ export class PublicArticlesController {
 
 	@Get(":id")
 	findOne(@Param("id") id: string) {
-		return this.publicArticlesService.findOne(+id);
+		return this.publicArticlesService.findOne(id);
+	}
+
+	@Get("/tags/:tagname")
+	findArticleByTag(@Param("tagname") id: string) {
+		return this.publicArticlesService.findArticleByTag(id);
+	}
+}
+
+@Controller()
+@PublicApi()
+export class PublicOtherController {
+	constructor(private readonly publicArticlesService: PublicArticlesService) {}
+	@Get("/archive")
+	findArchive() {
+		return this.publicArticlesService.findArchive();
 	}
 }

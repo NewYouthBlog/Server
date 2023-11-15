@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { PublicArticlesService } from "./public-articles.service";
-import { PublicArticlesController } from "./public-articles.controller";
+import { PublicArticlesController, PublicOtherController } from "./public-articles.controller";
 import { AdminArticlesModule } from "src/admin-articles/articles.module";
 
 @Module({
-	controllers: [PublicArticlesController],
+	controllers: [PublicArticlesController, PublicOtherController],
 	providers: [PublicArticlesService],
 	imports: [AdminArticlesModule],
 })

@@ -16,6 +16,8 @@ export class JwtAuthGuard extends AuthGuard("jwtAuth") {
 			context.getClass(),
 		]);
 		if (isPublic) {
+			// 公开的路由将role设为public
+			context.switchToHttp().getRequest().user = { roles: "public" };
 			return true;
 		}
 		return super.canActivate(context);
