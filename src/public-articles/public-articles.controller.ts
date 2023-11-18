@@ -19,8 +19,8 @@ export class PublicArticlesController {
 	}
 
 	@Get("/tags/:tagname")
-	findArticleByTag(@Param("tagname") id: string) {
-		return this.publicArticlesService.findArticleByTag(id);
+	findArticleByTag(@Param("tagname") id: string, @Query() { status, page, limit }: PaginationDto) {
+		return this.publicArticlesService.findArticleByTag(id, status, page, limit);
 	}
 }
 
@@ -31,5 +31,9 @@ export class PublicOtherController {
 	@Get("/archive")
 	findArchive() {
 		return this.publicArticlesService.findArchive();
+	}
+	@Get("/headline")
+	findHeadline() {
+		return this.publicArticlesService.findHeadline();
 	}
 }

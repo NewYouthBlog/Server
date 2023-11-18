@@ -33,9 +33,30 @@ export class PublicArticlesService {
 		return await this.articleRepository.findById(id).populate("tags", "name");
 	}
 
-	async findArticleByTag(tagname: string) {
+	async findArticleByTag(tagname: string, status = 1, skip = 0, limit?: number) {
 		const tag = await this.tagsService.findWithName(tagname);
-		return await this.articleRepository.find({ tags: { $in: [tag._id] } }).populate("tags", "name");
+		const query = this.articleRepository
+			.find({ status, tags: { $in: [tag._id] } })
+			.sort({ updatedAt: -1 })
+			.populate("tags", "name");
+		if (skip) {
+			query.skip((skip - 1) * limit);
+		}
+		if (limit) {
+			query.limit(limit);
+		}
+		return {
+			articles: await query.exec(),
+			total: await this.articleRepository.countDocuments({ status }),
+			limit,
+			page: skip,
+		};
+	}
+
+	async findHeadline() {
+		return {
+			articles: await this.articleRepository.find({ status: 1, HeadImg: { $ne: "" } }),
+		};
 	}
 
 	// 归档文章查询，根据时间排序
