@@ -26,6 +26,13 @@ export class ArticlesService {
 	}
 
 	async update(id: string, updateArticleDto: UpdateArticleDto) {
+		for (let i = 0; i < updateArticleDto.tags.length; i++) {
+			const findTag = await this.tagsService.findWithName(updateArticleDto.tags[i]);
+			if (!findTag) {
+				throw new BadRequestException("标签不存在");
+			}
+			updateArticleDto.tags[i] = String(findTag._id);
+		}
 		await this.articleRepository.findByIdAndUpdate(id, updateArticleDto);
 	}
 

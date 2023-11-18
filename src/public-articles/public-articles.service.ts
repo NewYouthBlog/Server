@@ -13,15 +13,20 @@ export class PublicArticlesService {
 	async findAll(status = 1, skip = 0, limit?: number) {
 		const query = this.articleRepository
 			.find({ status })
-			.sort({ _id: -1 })
+			.sort({ updatedAt: -1 })
 			.populate("tags", "name");
 		if (skip) {
-			query.skip(skip - 1);
+			query.skip((skip - 1) * limit);
 		}
 		if (limit) {
 			query.limit(limit);
 		}
-		return query.exec();
+		return {
+			articles: await query.exec(),
+			total: await this.articleRepository.countDocuments({ status }),
+			limit,
+			page: skip,
+		};
 	}
 
 	async findOne(id: string) {
