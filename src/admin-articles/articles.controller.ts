@@ -14,7 +14,6 @@ import { UpdateArticleDto } from "./dto/update-article.dto";
 import { Role } from "src/role/role.enum";
 import { AllowedFrom } from "src/role/roles.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
-import multer from "multer";
 
 @Controller("articles")
 @AllowedFrom(Role.Admin)

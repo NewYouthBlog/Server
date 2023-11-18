@@ -47,7 +47,7 @@ export class PublicArticlesService {
 		}
 		return {
 			articles: await query.exec(),
-			total: await this.articleRepository.countDocuments({ status }),
+			total: await this.articleRepository.countDocuments({ status, tags: { $in: [tag._id] } }),
 			limit,
 			page: skip,
 		};
@@ -71,6 +71,7 @@ export class PublicArticlesService {
 				$project: {
 					year: { $year: "$createdAt" },
 					month: { $month: "$createdAt" },
+					day: { $dayOfMonth: "$createdAt" },
 					title: 1,
 					createdAt: 1,
 				},
@@ -80,6 +81,7 @@ export class PublicArticlesService {
 					_id: {
 						year: "$year",
 						month: "$month",
+						day: "$day",
 					},
 					articles: {
 						$push: {
