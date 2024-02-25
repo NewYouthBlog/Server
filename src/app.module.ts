@@ -9,7 +9,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { JwtAuthGuard } from "./auth/jwt.gurd";
 import { TagsModule } from "./tags/tags.module";
 import { AdminArticlesModule } from "./admin-articles/articles.module";
-import { PublicArticlesModule } from './public-articles/public-articles.module';
+import { PublicArticlesModule } from "./public-articles/public-articles.module";
 
 @Module({
 	imports: [
