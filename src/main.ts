@@ -10,7 +10,7 @@ async function bootstrap() {
 	app.disable("x-powered-by");
 	app.enableCors();
 	app.useGlobalInterceptors(new response());
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 	app.useGlobalFilters(new errfitter());
 	await app.listen(3001);
 }

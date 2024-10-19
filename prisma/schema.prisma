@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Article {
+    id        Int      @id @default(autoincrement())
+    title     String   @db.VarChar(255)
+    status    Int
+    content   String   @db.LongText
+    image     String   @default("https://aioseo.com/wp-content/uploads/2021/04/how-to-find-and-fix-404-errors-in-wordpress.png")
+    HeadImg   String   @default("")
+    createdAt DateTime @default(now()) // 自动设置为当前时间
+    updatedAt DateTime @updatedAt // 每次更新时自动更新时间
+    tags      Tag[]
+}
+
+model Tag {
+    id        Int       @id @default(autoincrement())
+    name      String
+    articles  Article[]
+    createdAt DateTime  @default(now()) // 自动设置为当前时间
+    updatedAt DateTime  @updatedAt // 每次更新时自动更新时间
+}
+
+model Users {
+    id       Int    @id @default(autoincrement())
+    username String
+    password String
+    role     Role
+}
+
+enum Role {
+    user
+    admin
+}

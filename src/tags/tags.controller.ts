@@ -23,21 +23,17 @@ export class TagsController {
 	}
 	@Get(":id")
 	@PublicApi()
-	findOne(@Param("id") id: string) {
-		return this.tagsService.findOne(id);
-	}
-	@Get(":name")
-	findWithName(@Param("name") name: string) {
-		return this.tagsService.findWithName(name);
+	findOne(@Param("id") id: number) {
+		return this.tagsService.findOne(Number(id));
 	}
 
 	@Patch(":id")
-	update(@Param("id") id: string, @Body() updateTagDto: UpdateTagDto) {
-		return this.tagsService.update(id, updateTagDto);
+	update(@Param("id") id: number, @Body() updateTagDto: UpdateTagDto) {
+		return this.tagsService.update(Number(id), updateTagDto);
 	}
 
 	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.tagsService.remove(id);
+	remove(@Param("id") id: number) {
+		return this.tagsService.remove(Number(id));
 	}
 }

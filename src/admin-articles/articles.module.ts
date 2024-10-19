@@ -1,18 +1,16 @@
 import { Module } from "@nestjs/common";
 import { ArticlesService } from "./articles.service";
 import { ArticlesController, UploadController } from "./articles.controller";
-import { TypegooseModule } from "nestjs-typegoose";
-import { Article } from "./entities/article.entity";
 import { TagsModule } from "src/tags/tags.module";
 import { MulterModule } from "@nestjs/platform-express";
 import { ConfigService } from "@nestjs/config";
-const articleModel = TypegooseModule.forFeature([Article]);
+import { PrismaModule } from "nestjs-prisma";
 
 @Module({
 	controllers: [ArticlesController, UploadController],
 	providers: [ArticlesService],
 	imports: [
-		articleModel,
+		PrismaModule.forRoot(),
 		TagsModule,
 		MulterModule.registerAsync({
 			useFactory: (configService: ConfigService) => ({
@@ -29,6 +27,6 @@ const articleModel = TypegooseModule.forFeature([Article]);
 			inject: [ConfigService],
 		}),
 	],
-	exports: [articleModel, TagsModule],
+	exports: [TagsModule],
 })
 export class AdminArticlesModule {}

@@ -9,13 +9,14 @@ export class PublicArticlesController {
 	constructor(private readonly publicArticlesService: PublicArticlesService) {}
 
 	@Get()
+	//分页
 	findAll(@Query() { status, page, limit }: PaginationDto) {
 		return this.publicArticlesService.findAll(status, page, limit);
 	}
 
 	@Get(":id")
-	findOne(@Param("id") id: string) {
-		return this.publicArticlesService.findOne(id);
+	findOne(@Param("id") id: number) {
+		return this.publicArticlesService.findOne(Number(id));
 	}
 
 	@Get("/tags/:tagname")

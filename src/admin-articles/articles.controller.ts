@@ -26,13 +26,13 @@ export class ArticlesController {
 	}
 
 	@Patch(":id")
-	update(@Param("id") id: string, @Body() updateArticleDto: UpdateArticleDto) {
-		return this.articlesService.update(id, updateArticleDto);
+	update(@Param("id") id: number, @Body() updateArticleDto: UpdateArticleDto) {
+		return this.articlesService.update(Number(id), updateArticleDto);
 	}
 
 	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.articlesService.remove(id);
+	remove(@Param("id") id: number) {
+		return this.articlesService.remove(Number(id));
 	}
 }
 

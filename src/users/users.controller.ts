@@ -46,19 +46,19 @@ export class UsersController {
 
 	@Get(":id")
 	@AllowedFrom(Role.Admin)
-	findOne(@Param("id") id: string) {
+	findOne(@Param("id") id: number) {
 		return this.usersService.findOne(id);
 	}
 
 	@Patch(":id")
 	@AllowedFrom(Role.Admin)
-	update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
+	update(@Param("id") id: number, @Body() updateUserDto: UpdateUserDto) {
 		return this.usersService.update(id, updateUserDto);
 	}
 
 	@Delete(":id")
 	@AllowedFrom(Role.Admin)
-	remove(@Param("id") id: string) {
-		return this.usersService.remove(id);
+	remove(@Param("id") id: number) {
+		return this.usersService.remove(Number(id));
 	}
 }

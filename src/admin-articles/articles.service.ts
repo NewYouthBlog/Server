@@ -1,46 +1,76 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { UpdateArticleDto } from "./dto/update-article.dto";
-import { InjectModel } from "nestjs-typegoose";
-import { Article } from "./entities/article.entity";
-import { ReturnModelType } from "@typegoose/typegoose";
-import { TagsService } from "src/tags/tags.service";
+import { PrismaService } from "nestjs-prisma";
 
 @Injectable()
 export class ArticlesService {
-	constructor(
-		@InjectModel(Article) private readonly articleRepository: ReturnModelType<typeof Article>,
-		private readonly tagsService: TagsService,
-	) {}
+	constructor(private prisma: PrismaService) {}
 	async create(createArticleDto: CreateArticleDto) {
 		// 先根据标签名找标签id
-		for (let i = 0; i < createArticleDto.tags.length; i++) {
-			const findTag = await this.tagsService.findWithName(createArticleDto.tags[i]);
-			if (!findTag) {
-				throw new BadRequestException("标签不存在");
-			}
-			createArticleDto.tags[i] = String(findTag._id);
+		const findTag = await this.prisma.tag.findMany({
+			where: { name: { in: createArticleDto.tags } },
+		});
+		if (findTag.length !== createArticleDto.tags.length) {
+			throw new BadRequestException("标签不存在");
 		}
-		const article = await this.articleRepository.create(createArticleDto);
+		const article = await this.prisma.article.create({
+			data: {
+				title: createArticleDto.title,
+				status: createArticleDto.status,
+				content: createArticleDto.content,
+				image: createArticleDto.image,
+				HeadImg: createArticleDto.HeadImg,
+				tags: {
+					connect: findTag.map((tag) => ({ id: tag.id })),
+				},
+			},
+		});
 		return article;
 	}
 
-	async update(id: string, updateArticleDto: UpdateArticleDto) {
-		for (let i = 0; i < updateArticleDto.tags.length; i++) {
-			const findTag = await this.tagsService.findWithName(updateArticleDto.tags[i]);
-			if (!findTag) {
-				throw new BadRequestException("标签不存在");
-			}
-			updateArticleDto.tags[i] = String(findTag._id);
+	async update(id: number, updateArticleDto: UpdateArticleDto) {
+		// find id
+		const findid = await this.prisma.article.findUnique({
+			where: {
+				id: id,
+			},
+		});
+		if (!findid) {
+			throw new BadRequestException("文章不存在");
 		}
-		await this.articleRepository.findByIdAndUpdate(id, updateArticleDto);
+		// 先根据标签名找标签id
+		const findTag = await this.prisma.tag.findMany({
+			where: { name: { in: updateArticleDto.tags } },
+		});
+		if (findTag.length !== updateArticleDto.tags.length) {
+			throw new BadRequestException("标签不存在");
+		}
+		const article = await this.prisma.article.update({
+			where: { id: id },
+			data: {
+				title: updateArticleDto.title,
+				status: updateArticleDto.status,
+				content: updateArticleDto.content,
+				image: updateArticleDto.image,
+				HeadImg: updateArticleDto.HeadImg,
+				tags: {
+					connect: findTag.map((tag) => ({ id: tag.id })),
+				},
+			},
+		});
+		return article;
 	}
 
-	async remove(id: string) {
-		const findArticle = await this.articleRepository.findOne({ _id: id });
-		if (!findArticle) {
-			throw new BadRequestException("该文章不存在");
+	async remove(id: number) {
+		const findid = await this.prisma.article.findUnique({
+			where: {
+				id: id,
+			},
+		});
+		if (!findid) {
+			throw new BadRequestException("文章不存在");
 		}
-		await this.articleRepository.deleteOne({ _id: id });
+		await this.prisma.article.delete({ where: { id: id } });
 	}
 }

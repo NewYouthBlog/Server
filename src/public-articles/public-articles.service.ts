@@ -1,103 +1,132 @@
-import { Injectable } from "@nestjs/common";
-import { ReturnModelType } from "@typegoose/typegoose";
-import { InjectModel } from "nestjs-typegoose";
-import { Article } from "src/admin-articles/entities/article.entity";
-import { TagsService } from "src/tags/tags.service";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { PrismaService } from "nestjs-prisma";
 
 @Injectable()
 export class PublicArticlesService {
-	constructor(
-		@InjectModel(Article) private readonly articleRepository: ReturnModelType<typeof Article>,
-		private readonly tagsService: TagsService,
-	) {}
-	async findAll(status = 1, skip = 0, limit?: number) {
-		const query = this.articleRepository
-			.find({ status })
-			.sort({ updatedAt: -1 })
-			.populate("tags", "name");
-		if (skip) {
-			query.skip((skip - 1) * limit);
-		}
+	constructor(private prisma: PrismaService) {}
+	async findAll(status = 1, page = 1, limit: number = null) {
 		if (limit) {
-			query.limit(limit);
+			// 当前页
+			const skip = (page - 1) * limit;
+			return await this.prisma.article.findMany({
+				where: { status: status },
+				skip: skip,
+				take: limit,
+				orderBy: {
+					createdAt: "desc",
+				},
+			});
+		} else {
+			return await this.prisma.article.findMany({
+				orderBy: {
+					createdAt: "desc",
+				},
+			});
 		}
-		return {
-			articles: await query.exec(),
-			total: await this.articleRepository.countDocuments({ status }),
-			limit,
-			page: skip,
-		};
 	}
 
-	async findOne(id: string) {
-		return await this.articleRepository.findById(id).populate("tags", "name");
+	async findOne(id: number) {
+		const article = await this.prisma.article.findUnique({
+			where: {
+				id: id,
+			},
+			include: {
+				tags: true,
+			},
+		});
+		return article;
 	}
 
-	async findArticleByTag(tagname: string, status = 1, skip = 0, limit?: number) {
-		const tag = await this.tagsService.findWithName(tagname);
-		const query = this.articleRepository
-			.find({ status, tags: { $in: [tag._id] } })
-			.sort({ updatedAt: -1 })
-			.populate("tags", "name");
-		if (skip) {
-			query.skip((skip - 1) * limit);
-		}
-		if (limit) {
-			query.limit(limit);
-		}
-		return {
-			articles: await query.exec(),
-			total: await this.articleRepository.countDocuments({ status, tags: { $in: [tag._id] } }),
-			limit,
-			page: skip,
-		};
+	async findArticleByTag(tagname: string, status = 1, page = 1, limit: number = null) {
+		const tag = await this.prisma.tag.findFirst({
+			where: {
+				name: tagname,
+			},
+		});
+
+		if (!tag) {
+			throw new BadRequestException("标签未找到");
+		} // 如果没有找到标签
+
+		const skip = (page - 1) * limit;
+
+		const articles = await this.prisma.article.findMany({
+			where: {
+				status: status,
+				tags: { some: { id: tag.id } }, // 根据标签 ID 过滤
+			},
+			skip: limit ? skip : undefined,
+			take: limit ? limit : undefined,
+			orderBy: {
+				createdAt: "desc",
+			},
+		});
+		return articles;
 	}
 
 	async findHeadline() {
 		return {
-			articles: await this.articleRepository.find({ status: 1, HeadImg: { $ne: "" } }),
+			articles: await this.prisma.article.findMany({
+				where: {
+					AND: [{ status: 1 }, { HeadImg: { not: "" } }],
+				},
+			}),
 		};
 	}
 
 	// 归档文章查询，根据时间排序
 	async findArchive() {
-		return await this.articleRepository.aggregate([
-			{
-				$match: {
-					status: 1,
-				},
+		type GroupedArticle = {
+			year: number;
+			month: number;
+			articles: {
+				id: number; // 假设 id 是数字
+				title: string;
+				createdAt: Date; // 或者使用 string，视你的数据结构而定
+			}[];
+		};
+
+		const articles = await this.prisma.article.findMany({
+			where: {
+				status: 1,
 			},
-			{
-				$project: {
-					year: { $year: "$createdAt" },
-					month: { $month: "$createdAt" },
-					day: { $dayOfMonth: "$createdAt" },
-					title: 1,
-					createdAt: 1,
-				},
+			select: {
+				id: true,
+				title: true,
+				createdAt: true,
 			},
-			{
-				$group: {
-					_id: {
-						year: "$year",
-						month: "$month",
-						day: "$day",
-					},
-					articles: {
-						$push: {
-							_id: "$_id",
-							title: "$title",
-							createdAt: "$createdAt",
-						},
-					},
-				},
-			},
-			{
-				$sort: {
-					"_id.year": -1,
-					"_id.month": -1,
-				},
-			},
-		]);
+		});
+
+		// 按年、月分组
+		const groupedArticles = articles.reduce<Record<string, GroupedArticle>>((acc, article) => {
+			const date = new Date(article.createdAt);
+			const year = date.getFullYear();
+			const month = date.getMonth() + 1; // 月份从 0 开始
+
+			const key = `${year}-${month}`;
+
+			if (!acc[key]) {
+				acc[key] = {
+					year,
+					month,
+					articles: [],
+				};
+			}
+
+			acc[key].articles.push({
+				id: article.id,
+				title: article.title,
+				createdAt: article.createdAt,
+			});
+
+			return acc;
+		}, {});
+
+		// 将结果转换为数组并按年月排序
+		const sortedResults = Object.values(groupedArticles).sort((a, b) => {
+			if (b.year !== a.year) return b.year - a.year;
+			return b.month - a.month;
+		});
+		return sortedResults;
 	}
 }
