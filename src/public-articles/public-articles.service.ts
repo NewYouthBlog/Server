@@ -8,20 +8,27 @@ export class PublicArticlesService {
 		if (limit) {
 			// 当前页
 			const skip = (page - 1) * limit;
-			return await this.prisma.article.findMany({
+			const articles = await this.prisma.article.findMany({
 				where: { status: status },
 				skip: skip,
 				take: limit,
 				orderBy: {
 					createdAt: "desc",
 				},
+				select: { id: true, title: true, image: true },
 			});
+			const total = await this.prisma.article.count({
+				where: { status },
+			});
+			return { articles, total };
 		} else {
-			return await this.prisma.article.findMany({
+			const articles = await this.prisma.article.findMany({
 				orderBy: {
 					createdAt: "desc",
 				},
+				select: { id: true, title: true },
 			});
+			return { articles };
 		}
 	}
 
