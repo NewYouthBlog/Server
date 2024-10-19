@@ -15,7 +15,8 @@ export class PublicArticlesService {
 				orderBy: {
 					createdAt: "desc",
 				},
-				select: { id: true, title: true, image: true },
+				include: { tags: true },
+				// select: { id: true, title: true, image: true, tags: true },
 			});
 			const total = await this.prisma.article.count({
 				where: { status },

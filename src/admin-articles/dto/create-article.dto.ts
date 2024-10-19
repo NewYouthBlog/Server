@@ -13,7 +13,7 @@ export class CreateArticleDto {
 	@IsString()
 	readonly image: string;
 	@IsString()
-	readonly HeadImg: string;
+	readonly HeadImg: string = "";
 	@IsNotEmpty({ message: "标签不能为空" })
 	readonly tags: string[];
 }
