@@ -6,12 +6,13 @@ import { errfitter } from "./common/errfitter";
 import { NestExpressApplication } from "@nestjs/platform-express";
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestExpressApplication>(AppModule);
-	app.disable("x-powered-by");
-	app.enableCors();
-	app.useGlobalInterceptors(new response());
-	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-	app.useGlobalFilters(new errfitter());
-	await app.listen(3001);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.disable("x-powered-by");
+  app.enableCors();
+  app.useGlobalInterceptors(new response());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalFilters(new errfitter());
+  await app.listen(3001);
+  console.log("run in 3001");
 }
 bootstrap();
