@@ -73,6 +73,7 @@ export class PublicArticlesService {
       orderBy: {
         createdAt: "desc",
       },
+      include: { tags: true },
     });
 
     const total = await this.prisma.article.count({
