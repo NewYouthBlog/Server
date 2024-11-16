@@ -77,7 +77,9 @@ export class PublicArticlesService {
     });
 
     const total = await this.prisma.article.count({
-      where: { status },
+      where: {
+        tags: { some: { id: tag.id } }, // 根据标签 ID 过滤
+      },
     });
     return { articles, total };
   }
