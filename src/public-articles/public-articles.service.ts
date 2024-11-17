@@ -110,11 +110,11 @@ export class PublicArticlesService {
       where: {
         status: 1,
       },
-      select: {
-        id: true,
-        title: true,
-        createdAt: true,
-      },
+      // select: {
+      //   id: true,
+      //   title: true,
+      //   createdAt: true,
+      // },
     });
 
     // 按年、月分组
@@ -134,11 +134,7 @@ export class PublicArticlesService {
           };
         }
 
-        acc[key].articles.push({
-          id: article.id,
-          title: article.title,
-          createdAt: article.createdAt,
-        });
+        acc[key].articles.push(article);
 
         return acc;
       },
