@@ -21,6 +21,44 @@ generator: "@tarslib/widdershins v4.0.17"
 
 # nestjs-blog
 
+## 🚀 快速开始 (Quick Start)
+
+如果你是首次获取本项目，请按照以下步骤运行：
+
+1.  **安装依赖 (Install Dependencies)**
+    ```bash
+    npm install
+    ```
+
+2.  **配置环境 (Configure Environment)**
+    复制 `.env.example` 为 `.env`，并修改其中的 `DATABASE_URL` 为你的数据库连接地址。
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **初始化数据库 (Initialize Database)**
+    同步数据库结构并生成客户端：
+    ```bash
+    npx prisma db push
+    ```
+
+4.  **填充初始数据 (Seed Data)**
+    **重要**：首次运行需要执行此命令以创建默认管理员用户。
+    ```bash
+    npx prisma db seed
+    ```
+    > 默认管理员账户:
+    > - 用户名: `admin`
+    > - 密码: `lcg9899`
+    > - 角色: `admin`
+
+5.  **启动服务 (Run Server)**
+    ```bash
+    npm run dev
+    ```
+
+---
+
 > v1.0.0
 
 Base URLs:

@@ -3,7 +3,7 @@ import { PrismaService } from "nestjs-prisma";
 
 @Injectable()
 export class PublicArticlesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
   async findAll(status = 1, page = 1, limit: number = null) {
     if (limit) {
       // 当前页
@@ -142,7 +142,7 @@ export class PublicArticlesService {
     );
 
     // 将结果转换为数组并按年月排序
-    const sortedResults = Object.values(groupedArticles).sort((a, b) => {
+    const sortedResults = Object.values(groupedArticles).sort((a: GroupedArticle, b: GroupedArticle) => {
       if (b.year !== a.year) return b.year - a.year;
       return b.month - a.month;
     });
