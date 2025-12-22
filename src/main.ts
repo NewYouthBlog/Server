@@ -12,7 +12,9 @@ async function bootstrap() {
   app.useGlobalInterceptors(new response());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new errfitter());
-  await app.listen(3001);
-  console.log("run in 3001");
+  app.setGlobalPrefix("api");
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`run in ${port}`);
 }
 bootstrap();

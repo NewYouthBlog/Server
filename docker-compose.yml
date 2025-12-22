@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  server:
+    build: .
+    container_name: blog_server
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - blog_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: blog_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - server
+    networks:
+      - blog_network
+
+networks:
+  blog_network:
+    driver: bridge
