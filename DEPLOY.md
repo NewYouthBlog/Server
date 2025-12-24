@@ -30,6 +30,10 @@ cp .env.example .env
 **关键配置项：**
 - `DATABASE_URL`: 您的数据库连接地址（确保容器可访问）。
 - `PORT`: 应用监听端口（默认 3000）。
+- `R2_ACCESS_KEY_ID`: Cloudflare R2 Access Key ID
+- `R2_SECRET_ACCESS_KEY`: Cloudflare R2 Secret Access Key
+- `R2_BUCKET_NAME`: 创建的存储桶名字
+- `R2_PUBLIC_DOMAIN`: 绑定的自定义域名 (用于生成返回给前端的访问链接)
 
 ### 3. 启动服务
 
