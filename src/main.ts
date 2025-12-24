@@ -4,11 +4,17 @@ import { ValidationPipe } from "@nestjs/common";
 import { response } from "./common/response";
 import { errfitter } from "./common/errfitter";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.disable("x-powered-by");
   app.enableCors();
+  
+  // 增加请求体大小限制以支持文件上传
+  app.use(bodyParser.json({ limit: '10mb' }));
+  app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+  
   app.useGlobalInterceptors(new response());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new errfitter());
