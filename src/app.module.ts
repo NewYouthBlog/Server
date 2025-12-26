@@ -11,21 +11,21 @@ import { AdminArticlesModule } from "./admin-articles/articles.module";
 import { PublicArticlesModule } from "./public-articles/public-articles.module";
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({ envFilePath: ".env.development", isGlobal: true }),
-		UsersModule,
-		AuthModule,
-		TagsModule,
-		AdminArticlesModule,
-		PublicArticlesModule,
-	],
-	controllers: [AppController],
-	providers: [
-		AppService,
-		{
-			provide: APP_GUARD,
-			useClass: JwtAuthGuard,
-		},
-	],
+  imports: [
+    ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    UsersModule,
+    AuthModule,
+    TagsModule,
+    AdminArticlesModule,
+    PublicArticlesModule,
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
